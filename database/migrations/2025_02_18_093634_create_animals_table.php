@@ -21,7 +21,7 @@ return new class extends Migration
             $table->float('weight')->nullable()->comment('NULL: Not set. Number - weight animal in KG');
             $table->date('birthday');
             $table->text('image')->comment('Main image URL');
-            $table->text('images')->comment('An array of images URLs, joined by ", "');
+            $table->text('images')->nullable()->comment('An array of images URLs, joined by ", "');
             $table->boolean('animal_friendly')->nullable()->default(null)->comment('NULL: Not set, FALSE: Not animal friendly, TRUE: Animal friendly');
             $table->boolean('vaccinated')->nullable()->default(null)->comment('NULL: Not set, FALSE: Not vaccinated, TRUE: Vaccinated');
             $table->timestamps();
