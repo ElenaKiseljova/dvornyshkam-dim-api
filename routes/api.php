@@ -9,7 +9,13 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::middleware(ApiMiddleware::class)->group(function () {
-    Route::get('/animals', [AnimalController::class, 'index']);
-    Route::get('/animals/{id}', [AnimalController::class, 'show']);
-});
+
+
+Route::resource('/animals', AnimalController::class)->middleware(ApiMiddleware::class)->except(['edit', 'create']);
+Route::controller(AnimalController::class)
+    ->prefix('/animals')
+    ->middleware(ApiMiddleware::class)
+    ->group(function () {
+        Route::delete('/{id}/restore', 'restore');
+        Route::delete('/{id}/forceDelete', 'forceDelete');
+    });
