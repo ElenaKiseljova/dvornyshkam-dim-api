@@ -57,7 +57,7 @@ class AnimalFactory extends Factory
         return [
             'slug' => fake()->slug(),
             'category' => $category,
-            'name' => fake()->name(),
+            'name' => fake()->firstName(),
             'birthday' => fake()->date('Y-m-d', date('Y-m-d', strtotime('-1 month'))),
             'gender' => $gender,
             'weight' => mt_rand(1, 100),
