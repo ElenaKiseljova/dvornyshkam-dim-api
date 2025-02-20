@@ -65,6 +65,7 @@ class AnimalFactory extends Factory
             'images' => implode(', ', $images),
             'animal_friendly' => mt_rand(0, 1),
             'vaccinated' => mt_rand(0, 1),
+            'description' => fake()->paragraph()
         ];
     }
 }

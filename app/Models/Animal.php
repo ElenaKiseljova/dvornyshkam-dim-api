@@ -26,6 +26,7 @@ class Animal extends Model
         'images',
         'animal_friendly',
         'vaccinated',
+        'description',
     ];
 
     /**
