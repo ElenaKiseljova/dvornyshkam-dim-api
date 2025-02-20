@@ -14,7 +14,7 @@ class AnimalRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -26,16 +26,13 @@ class AnimalRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:50',
-            'slug' => 'nullable|string|unique',
-            //   'website' => 'nullable|url',
-            //   'address' => 'nullable|string|max:255',
-            'category' => ['required', Rule::enum(Animal::CATEGORIES)],
-            'gender' => ['required', Rule::enum(Animal::GENDERS)],
-            'weight' => 'required|decimal',
+            'slug' => 'nullable|string|unique:animals',
+            'category' => ['required', Rule::in(Animal::CATEGORIES)],
+            'gender' => ['required', Rule::in(Animal::GENDERS)],
+            'weight' => 'required|numeric',
             'birthday' => 'required|date',
-            'image' => 'nullable|string',
-            'images' => 'array',
-            'images.*' => 'string',
+            'image' => 'required|string',
+            'images' => 'string|nullable',
             'animal_friendly' => 'required|boolean',
             'vaccinated' => 'required|boolean',
             'description' => 'nullable|string',
@@ -47,6 +44,7 @@ class AnimalRequest extends FormRequest
     {
         $this->merge([
             'slug' => $this->name && !$this->slug ? Str::slug($this->name) : $this->slug,
+            'images' => is_array($this->images) && count($this->images) ? implode(', ', $this->images) : null,
         ]);
     }
 }
