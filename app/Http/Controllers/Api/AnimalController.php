@@ -21,6 +21,11 @@ class AnimalController extends Controller
         }
       })
       ->where(function ($query) {
+        if ($category = request()->query('category')) {
+          $query->where('category', $category);
+        }
+      })
+      ->where(function ($query) {
         if ($gender = request()->query('gender')) {
           $query->where('gender', $gender);
         }
