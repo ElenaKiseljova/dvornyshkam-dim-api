@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Admin | All Animals')
+@section('title', 'Admin | Animals')
 
 @section('content')
     <main class="py-5">
@@ -11,7 +11,7 @@
                         <div class="card-header card-title">
                             <div class="d-flex align-items-center">
                                 <h2 class="mb-0">
-                                    All Animals
+                                    Animals
                                     @if (request()->query('trash'))
                                         <small>( In Trash )</small>
                                     @endif
