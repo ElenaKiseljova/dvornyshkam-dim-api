@@ -122,10 +122,8 @@ class AnimalController extends Controller
     /**
      * Move the specified resource from trash.
      */
-    public function restore(int $id)
+    public function restore(Animal $animal)
     {
-        $animal = Animal::withTrashed()->find($id);
-
         $animal->restore();
 
         $message = 'Animal has been restored from trash.';
@@ -142,10 +140,8 @@ class AnimalController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function forceDelete(int $id)
+    public function forceDelete(Animal $animal)
     {
-        $animal = Animal::withTrashed()->find($id);
-
         $animal->forceDelete();
 
 
