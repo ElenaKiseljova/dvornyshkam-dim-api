@@ -31,8 +31,9 @@ class AnimalRequest extends FormRequest
             'gender' => ['required', Rule::in(Animal::GENDERS)],
             'weight' => 'required|numeric',
             'birthday' => 'required|date',
-            'image' => 'required|string',
-            'images' => 'string|nullable',
+            'image' => 'nullable|image',
+            'images' => 'array|nullable',
+            'images*' => 'image',
             'animal_friendly' => 'required|boolean',
             'vaccinated' => 'required|boolean',
             'description' => 'nullable|string',
@@ -44,7 +45,7 @@ class AnimalRequest extends FormRequest
     {
         $this->merge([
             'slug' => $this->name && !$this->slug ? Str::slug($this->name) : $this->slug,
-            'images' => is_array($this->images) && count($this->images) ? implode(', ', $this->images) : null,
+            // 'images' => is_array($this->images) && count($this->images) ? implode(', ', $this->images) : null,
         ]);
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Requests\AnimalUpdateRequest;
 use App\Models\Animal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class AnimalController extends Controller
 {
@@ -41,7 +42,10 @@ class AnimalController extends Controller
     {
         $animal = new Animal();
 
-        return view('animals.create', compact('animal'));
+        $categories = Animal::CATEGORIES;
+        $genders = Animal::GENDERS;
+
+        return view('animals.create', compact('animal', 'categories', 'genders'));
     }
 
     /**
@@ -49,7 +53,9 @@ class AnimalController extends Controller
      */
     public function store(AnimalRequest $request)
     {
-        $animal = Animal::create($request->validated());
+        $animal = Animal::create([...$request->validated(), 'image' => null]);
+
+        $animal->update([...$request->validated(), 'image' => $this->uploadImage($animal)]);
 
         $message = 'Animal has been added successfully';
 
@@ -80,7 +86,10 @@ class AnimalController extends Controller
      */
     public function edit(Animal $animal)
     {
-        return view('animals.edit')->with('animal', $animal);
+        $categories = Animal::CATEGORIES;
+        $genders = Animal::GENDERS;
+
+        return view('animals.edit', compact('animal', 'categories', 'genders'));
     }
 
     /**
@@ -88,7 +97,7 @@ class AnimalController extends Controller
      */
     public function update(AnimalUpdateRequest $request, Animal $animal)
     {
-        $animal->update($request->validated());
+        $animal->update([...$request->validated(), 'image' => $this->uploadImage($animal)]);
 
         $message = 'Animal has been updated successfully';
 
@@ -98,6 +107,7 @@ class AnimalController extends Controller
 
         return redirect()->route('animals.index')->with('message', $message);
     }
+
 
     /**
      * Move the specified resource to trash.
@@ -153,5 +163,23 @@ class AnimalController extends Controller
 
         return back()
             ->with('message', $message);
+    }
+
+    protected function uploadImage(Animal $animal)
+    {
+        if (request()->hasFile('image')) {
+            $uploadedFile = request()->file('image');
+
+            $fileName = $uploadedFile->storeAs(
+                "animals/{$animal->id}",
+                'main' . '.' . $uploadedFile->getClientOriginalExtension()
+            );
+
+            $url = Storage::url($fileName);
+
+            return $url;
+        }
+
+        return $animal->image;
     }
 }
