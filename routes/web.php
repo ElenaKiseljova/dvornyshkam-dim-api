@@ -8,9 +8,9 @@ Route::get('/', function () {
 });
 
 Route::resource('/animals', AnimalController::class);
-Route::delete('/animals/{animal}/restore', [AnimalController::class, 'restore'])
-    ->name('animals.restore')
-    ->withTrashed();
-Route::delete('/animals/{animal}/force-delete', [AnimalController::class, 'forceDelete'])
-    ->name('animals.force-delete')
-    ->withTrashed();
+Route::controller(AnimalController::class)
+    ->prefix('/animals')
+    ->group(function () {
+        Route::delete('/{animal}/restore', 'restore')->name('animals.restore')->withTrashed();
+        Route::delete('/{animal}/forceDelete', 'forceDelete')->name('animals.force-delete')->withTrashed();
+    });
