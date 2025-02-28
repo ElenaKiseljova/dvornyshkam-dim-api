@@ -72,8 +72,14 @@ class AnimalController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Animal $animal)
+    public function show(string | int $animal)
     {
+        if (is_numeric($animal)) {
+            $animal = Animal::where('id', $animal)->firstOrFail();
+        } else {
+            $animal = Animal::where('slug', $animal)->firstOrFail();
+        }
+
         if (request()->wantsJson()) {
             return response()->json(['data' => $animal,], 200);
         }
