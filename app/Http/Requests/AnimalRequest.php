@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Animal;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -24,28 +25,49 @@ class AnimalRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'name' => 'required|string|max:50',
-            'slug' => 'nullable|string|unique:animals',
+            'slug' => ['required', 'string', Rule::unique('animals', 'slug')],
             'category' => ['required', Rule::in(Animal::CATEGORIES)],
             'gender' => ['required', Rule::in(Animal::GENDERS)],
             'weight' => 'required|numeric',
             'birthday' => 'required|date',
             'image' => 'nullable|image',
-            'images' => 'array|nullable',
+            'images' => 'nullable|array',
             'images*' => 'image',
             'animal_friendly' => 'required|boolean',
             'vaccinated' => 'required|boolean',
             'description' => 'nullable|string',
         ];
+
+        if ($this->method() === 'PUT') {
+            $rules['slug'] = ['required', 'string', Rule::unique('animals', 'slug')->ignore($this->route('animal')->id)];
+        }
+
+        return $rules;
     }
 
-    // https://www.udemy.com/course/laravel-blog-development/learn/lecture/34779478
-    protected function prepareForValidation()
+    // protected function prepareForValidation()
+    // {
+    //     $this->merge([
+    //         // ---
+    //     ]);
+    // }
+
+    public function getData()
     {
-        $this->merge([
-            'slug' => $this->name && !$this->slug ? Str::slug($this->name) : $this->slug,
-            // 'images' => is_array($this->images) && count($this->images) ? implode(', ', $this->images) : null,
-        ]);
+        $data = $this->validated();
+
+        if ($this->hasFile('image')) {
+            $directory = Animal::makeDirectory();
+
+            $data['image'] = $this->image->store($directory);
+        }
+
+        if (is_array($this->images)) {
+            $data['images'] = null; // TO DO: store images
+        }
+
+        return $data;
     }
 }

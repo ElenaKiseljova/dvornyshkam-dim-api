@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AnimalRequest;
-use App\Http\Requests\AnimalUpdateRequest;
 use App\Models\Animal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class AnimalController extends Controller
 {
@@ -53,9 +51,7 @@ class AnimalController extends Controller
      */
     public function store(AnimalRequest $request)
     {
-        $animal = Animal::create([...$request->validated(), 'image' => null]);
-
-        $animal->update([...$request->validated(), 'image' => $this->uploadImage($animal)]);
+        $animal = Animal::create($request->getData());
 
         $message = 'Animal has been added successfully';
 
@@ -101,9 +97,9 @@ class AnimalController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(AnimalUpdateRequest $request, Animal $animal)
+    public function update(AnimalRequest $request, Animal $animal)
     {
-        $animal->update([...$request->validated(), 'image' => $this->uploadImage($animal)]);
+        $animal->update($request->getData());
 
         $message = 'Animal has been updated successfully';
 
@@ -169,23 +165,5 @@ class AnimalController extends Controller
 
         return back()
             ->with('message', $message);
-    }
-
-    protected function uploadImage(Animal $animal)
-    {
-        if (request()->hasFile('image')) {
-            $uploadedFile = request()->file('image');
-
-            $fileName = $uploadedFile->storeAs(
-                "animals/{$animal->id}",
-                'main' . '.' . $uploadedFile->getClientOriginalExtension()
-            );
-
-            $url = Storage::url($fileName);
-
-            return $url;
-        }
-
-        return $animal->image;
     }
 }

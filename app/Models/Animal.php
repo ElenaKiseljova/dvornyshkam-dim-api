@@ -7,6 +7,7 @@ use App\Models\Scopes\AllowedSort;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Animal extends Model
 {
@@ -51,4 +52,18 @@ class Animal extends Model
         'male',
         'female'
     ];
+
+    public function fileUrl(): string
+    {
+        return $this->image ? Storage::url($this->image) : asset('storage/placeholder-image.jpg');
+    }
+
+    public static function makeDirectory()
+    {
+        $subFolder = 'animals/' .  date('Y/m/d');
+
+        Storage::makeDirectory($subFolder);
+
+        return $subFolder;
+    }
 }
